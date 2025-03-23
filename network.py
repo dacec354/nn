@@ -1,9 +1,7 @@
 from abc import abstractmethod
-from time import sleep, time
+from time import time
 
 import numpy as np
-from unicodedata import normalize
-
 
 def classify(possibilities):
     return np.rint(possibilities[:, -1])
@@ -21,7 +19,6 @@ class Activation:
         pass
 
 class ActivationReLU(Activation):
-    # TODO 这里采用了一种简化的归一化
     def __call__(self, inputs, normalized=True):
         output = np.maximum(0, inputs)
         if normalized:
@@ -181,6 +178,7 @@ class NetWork:
         num_samples = training_data.shape[0]
         num_batches = num_samples // batch_size # 计算批次数量，向下取整
 
+        batch_outputs = None
         for epoch in range(num_epochs):
             start_time = time()
             print(f'Epoch {epoch+1}/{num_epochs}')
@@ -234,7 +232,8 @@ class NetWork:
         print('Training complete')
         return batch_outputs[-1]
 
-    def accuracy(self, outputs, targets):
+    @staticmethod
+    def accuracy(outputs, targets):
         """
         计算多分类任务的准确率 (例如 MNIST).
 
